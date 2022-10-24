@@ -7,6 +7,7 @@ use crossterm::event::{Event, KeyCode, self};
 use crossterm::{terminal, ExecutableCommand};
 use crossterm::terminal::{EnterAlternateScreen, LeaveAlternateScreen};
 use tugowar::frame::Drawable;
+use tugowar::units::UnitType;
 use tugowar::{frame, render, player::Player, interface::Interface};
 
 fn main() -> Result <(), Box<dyn Error>> {
@@ -53,6 +54,18 @@ fn main() -> Result <(), Box<dyn Error>> {
                     KeyCode::Esc | KeyCode::Char('q') => {
                         break 'gameloop;
                     }
+                    KeyCode::Char('f') => {
+                        player1.spawn_unit(UnitType::Fighter);
+                        player1.spend_energy(100);
+                    }
+                    KeyCode::Char('s') => {
+                        player1.spawn_unit(UnitType::Shooter);
+                        player1.spend_energy(100);
+                    }
+                    KeyCode::Char('c') => {
+                        player1.spawn_unit(UnitType::Cannon);
+                        player1.spend_energy(300);
+                    }
                     _ => {}
                 }
             }
@@ -63,7 +76,6 @@ fn main() -> Result <(), Box<dyn Error>> {
         player2.update(delta);
         interface.update(player1.hp, player1.en, player2.hp, player2.en);
         
-
         //Draw & Render
         let drawables: Vec<&dyn Drawable> = vec![&interface];
         for drawable in drawables {

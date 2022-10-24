@@ -1,6 +1,6 @@
 use std::time::Duration;
 use rusty_time::timer::Timer;
-use crate::{units::{Unit, UnitType}, frame::Drawable};
+use crate::{units::{Unit, UnitType}, frame::{Drawable, Frame}};
 
 pub const MAX_ENERGY: i32 = 1000;
 pub const MIN_ENERGY: i32 = 0;
@@ -11,7 +11,8 @@ pub struct Player {
     pub hp: i32,
     pub en: i32,
     pub units: Vec<Unit>,
-    timer: Timer,
+    en_timer: Timer,
+    unit_timer: Timer,
 }
 
 impl Player {
@@ -20,7 +21,8 @@ impl Player {
             hp: MAX_HP,
             en: MIN_ENERGY,
             units: Vec::new(),
-            timer: Timer::from_millis(100),
+            en_timer: Timer::from_millis(100),
+            unit_timer: Timer::from_millis(500),
         }
     }
 
@@ -40,26 +42,32 @@ impl Player {
     }
 
     pub fn spawn_unit(&mut self, t: UnitType) {
-        
+         self.units.push(Unit::new(t));
     }
 
     pub fn update(&mut self, delta: Duration) {
-        self.timer.update(delta);
-        if self.timer.ready {
+        self.en_timer.update(delta);
+        if self.en_timer.ready {
             self.en += 10;
             if self.en > MAX_ENERGY {
                 self.en = MAX_ENERGY;
             }
-            self.timer.reset();
+            self.en_timer.reset();
+        }
+        self.unit_timer.update(delta);
+        if self.unit_timer.ready {
+            for u in self.units.iter_mut() {
+                u.move_unit(1);
+            }
+            self.unit_timer.reset();
         }
     }
 }
 
-// impl Drawable for Player {
-//     fn draw(&self, frame: &mut Frame) {
-//         frame[self.x][self.y] = "A";
-//         for shot in self.shots.iter() {
-//             shot.draw(frame);
-//         }
-//     }
-// }
+impl Drawable for Player {
+    fn draw(&self, frame: &mut Frame) {
+        for unit in self.units.iter() {
+            unit.draw(frame);
+        }
+    }
+}
