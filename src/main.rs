@@ -56,15 +56,12 @@ fn main() -> Result <(), Box<dyn Error>> {
                     }
                     KeyCode::Char('f') => {
                         player1.spawn_unit(UnitType::Fighter);
-                        player1.spend_energy(100);
                     }
                     KeyCode::Char('s') => {
                         player1.spawn_unit(UnitType::Shooter);
-                        player1.spend_energy(100);
                     }
                     KeyCode::Char('c') => {
                         player1.spawn_unit(UnitType::Cannon);
-                        player1.spend_energy(300);
                     }
                     _ => {}
                 }
@@ -77,7 +74,7 @@ fn main() -> Result <(), Box<dyn Error>> {
         interface.update(player1.hp, player1.en, player2.hp, player2.en);
         
         //Draw & Render
-        let drawables: Vec<&dyn Drawable> = vec![&interface];
+        let drawables: Vec<&dyn Drawable> = vec![&interface,&player1];
         for drawable in drawables {
             drawable.draw(&mut curr_frame);
         }

@@ -12,7 +12,7 @@ pub struct Player {
     pub en: i32,
     pub units: Vec<Unit>,
     en_timer: Timer,
-    unit_timer: Timer,
+    //unit_timer: Timer,
 }
 
 impl Player {
@@ -22,13 +22,17 @@ impl Player {
             en: MIN_ENERGY,
             units: Vec::new(),
             en_timer: Timer::from_millis(100),
-            unit_timer: Timer::from_millis(500),
+            //unit_timer: Timer::from_millis(500),
         }
     }
 
-    pub fn spend_energy(&mut self, e: i32) {
-        self.en -= e;
-        if self.en < MIN_ENERGY {self.en = MIN_ENERGY;}
+    fn spend_energy(&mut self, e: i32) -> bool {
+        if self.en - e < MIN_ENERGY {
+            false
+        } else {
+            self.en -= e;
+            true
+        }
     }
 
     pub fn gain_energy(&mut self, e: i32) {
@@ -42,7 +46,23 @@ impl Player {
     }
 
     pub fn spawn_unit(&mut self, t: UnitType) {
-         self.units.push(Unit::new(t));
+        match t {
+            UnitType::Fighter => {
+                if self.spend_energy(100) {
+                    self.units.push(Unit::new(t));
+                }
+            }
+            UnitType::Shooter => {
+                if self.spend_energy(100) {
+                    self.units.push(Unit::new(t));
+                }
+            }
+            UnitType::Cannon => {
+                if self.spend_energy(300) {
+                    self.units.push(Unit::new(t));
+                }
+            }
+        }
     }
 
     pub fn update(&mut self, delta: Duration) {
@@ -54,13 +74,20 @@ impl Player {
             }
             self.en_timer.reset();
         }
-        self.unit_timer.update(delta);
-        if self.unit_timer.ready {
-            for u in self.units.iter_mut() {
-                u.move_unit(1);
-            }
-            self.unit_timer.reset();
+        for unit in self.units.iter_mut() {
+            unit.update(delta);
         }
+        self.units.retain(|unit| !unit.dead());
+    }
+
+    pub fn print_units(&self) {
+        let mut prnt_string: String = String::new();
+        for unit in self.units.iter() {
+            let u_string = unit.to_string();
+            prnt_string.push_str(&u_string);
+            prnt_string.push_str(",");
+        }
+        println!("{}",prnt_string);
     }
 }
 
