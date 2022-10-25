@@ -73,14 +73,14 @@ impl Drawable for Interface {
             }
 
             //Draw P2 HP
-            if x <= (self.p1hp / HPSIZE) {
+            if x <= (self.p2hp / HPSIZE) {
                 frame[INTXP2 + hp_start.len() + x as usize][INTYP2] = "|";
             } else {
                 frame[INTXP2 + hp_start.len() + x as usize][INTYP2] = "-";
             }
 
             //Draw P2 EN
-            if x < (self.p1en / ENSIZE) {
+            if x < (self.p2en / ENSIZE) {
                 frame[INTXP2 + en_start.len() + x as usize][INTYP2 + 1] = "|";
             } else {
                 frame[INTXP2 + en_start.len() + x as usize][INTYP2 + 1] = "-";
