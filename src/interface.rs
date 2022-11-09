@@ -90,6 +90,5 @@ impl Drawable for Interface {
         frame[INTXP1 + INTLEN as usize + en_start.len()][INTYP1 + 1] = "]";
         frame[INTXP2 + INTLEN as usize + hp_start.len()][INTYP2] = "]";
         frame[INTXP2 + INTLEN as usize + en_start.len()][INTYP2 + 1] = "]";
-        //print!("{}:{}|", self.p1en, self.p1en / 100);
     }
 }

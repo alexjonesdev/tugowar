@@ -71,6 +71,10 @@ fn main() -> Result <(), Box<dyn Error>> {
         //Updates
         player1.update(delta);
         player2.update(delta);
+        player2.take_damage(player1.get_dd());
+        player1.reset_dd();
+        player1.take_damage(player2.get_dd());
+        player2.reset_dd();
         interface.update(player1.hp, player1.en, player2.hp, player2.en);
         
         //Draw & Render

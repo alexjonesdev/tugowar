@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::{time::Duration, i32};
 
 use crate::{frame::{Frame, Drawable}, NUM_ROWS, NUM_COLS};
 use rusty_time::timer::Timer;
@@ -17,6 +17,7 @@ pub struct Unit {
     timer: Timer,
 }
 
+const UTIME: u64 = 500;
 const FHP: i32 = 3;
 const SHP: i32 = 3;
 const CHP: i32 = 5;
@@ -33,21 +34,21 @@ impl Unit {
                 x: 1,
                 hp: FHP,
                 damage: FDAM,
-                timer: Timer::from_millis(1000),
+                timer: Timer::from_millis(UTIME),
             },
             UnitType::Shooter => Self {
                 unit_type: UnitType::Shooter,
                 x: 1,
                 hp: SHP,
                 damage: SDAM,
-                timer: Timer::from_millis(1000),
+                timer: Timer::from_millis(UTIME),
             },
             UnitType::Cannon => Self {
                 unit_type: UnitType::Cannon,
                 x: 1,
                 hp: CHP,
                 damage: CDAM,
-                timer: Timer::from_millis(1000),
+                timer: Timer::from_millis(UTIME),
             },
         }
     }
@@ -64,8 +65,20 @@ impl Unit {
         self.x += distance;
     }
 
+    pub fn unit_location(&self) -> usize {
+        self.x
+    }
+
+    pub fn take_damage(&mut self, amt: i32) {
+        self.hp -= amt;
+    }
+
+    pub fn get_hp(&self) -> i32 {
+        self.hp
+    }
+
     pub fn dead(&self) -> bool {
-        self.hp < 1 && self.timer.ready
+        (self.hp < 1 && self.timer.ready) || (self.x > NUM_COLS - 1)
     }
 
     pub fn to_string(&self) -> String {
@@ -89,7 +102,7 @@ impl Drawable for Unit {
             UnitType::Cannon => {
                 frame[self.x][UFLOOR] = "C";
             }
-            _ => {frame[self.x][UFLOOR] = "X";}
+            //_ => {frame[self.x][UFLOOR] = "X";}
         }
     }
 }

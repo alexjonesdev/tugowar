@@ -1,6 +1,6 @@
 use std::time::Duration;
 use rusty_time::timer::Timer;
-use crate::{units::{Unit, UnitType}, frame::{Drawable, Frame}};
+use crate::{units::{Unit, UnitType}, frame::{Drawable, Frame}, NUM_COLS};
 
 pub const MAX_ENERGY: i32 = 1000;
 pub const MIN_ENERGY: i32 = 0;
@@ -12,7 +12,7 @@ pub struct Player {
     pub en: i32,
     pub units: Vec<Unit>,
     en_timer: Timer,
-    //unit_timer: Timer,
+    pub dd: i32,
 }
 
 impl Player {
@@ -22,7 +22,7 @@ impl Player {
             en: MIN_ENERGY,
             units: Vec::new(),
             en_timer: Timer::from_millis(100),
-            //unit_timer: Timer::from_millis(500),
+            dd: 0,
         }
     }
 
@@ -45,6 +45,14 @@ impl Player {
         if self.en < MIN_HP {self.en = MIN_HP;}
     }
 
+    pub fn get_dd(&self) -> i32 {
+        self.dd
+    }
+
+    pub fn reset_dd(&mut self) {
+        self.dd = 0;
+    }
+
     pub fn spawn_unit(&mut self, t: UnitType) {
         match t {
             UnitType::Fighter => {
@@ -63,6 +71,7 @@ impl Player {
                 }
             }
         }
+        //println!("{}",self.units.len());
     }
 
     pub fn update(&mut self, delta: Duration) {
@@ -76,6 +85,10 @@ impl Player {
         }
         for unit in self.units.iter_mut() {
             unit.update(delta);
+
+            if unit.unit_location() > NUM_COLS - 1 {
+                self.dd += unit.get_hp();
+            }
         }
         self.units.retain(|unit| !unit.dead());
     }
